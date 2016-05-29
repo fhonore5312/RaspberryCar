@@ -1,14 +1,18 @@
 # Imports
+import pygame
 import RPi.GPIO as GPIO
 from time import sleep
 
 # Initialisation
 GPIO.setmode(GPIO.BCM)
+GPIO.cleanup()
 
+# Motor1 => moteur de direction
 Motor1E = 23
 Motor1A = 24
 Motor1B = 25
 
+# Motor2 => moteur de marche avant / marche arrière
 Motor2E = 21
 Motor2A = 16
 Motor2B = 20
@@ -24,32 +28,32 @@ GPIO.setup(Motor2E,GPIO.OUT)
 # GPIO.output(Motor1E,GPIO.HIGH)
 # GPIO.output(Motor1E,GPIO.HIGH)
 
-Motor1 = GPIO.PWM(23, 50)
-Motor2 = GPIO.PWM(21, 50)
+Motor1 = GPIO.PWM(23, 100)
+Motor2 = GPIO.PWM(21, 100)
 Motor1.start(0)
 Motor2.start(0)
 
 # marche avant
 def forward(speed):
-	print "going forwards"
-	GPIO.output(Motor1A,GPIO.HIGH)
-	GPIO.output(Motor1B,GPIO.LOW)
-	Motor1.ChangeDutyCycle(speed)
+	# print "going forwards"
+	GPIO.output(Motor2A,GPIO.HIGH)
+	GPIO.output(Motor2B,GPIO.LOW)
+	Motor2.ChangeDutyCycle(speed)
 
 # marche arrière
-def backward(speed)
-	print "going backwards"
-	GPIO.output(Motor1A,GPIO.LOW)
-	GPIO.output(Motor1B,GPIO.HIGH)
-	Motor1.ChangeDutyCycle(speed)
+def backward(speed):
+	# print "going backwards"
+	GPIO.output(Motor2A,GPIO.LOW)
+	GPIO.output(Motor2B,GPIO.HIGH)
+	Motor2.ChangeDutyCycle(speed)
 
-def stop()
+def stop():
 	Motor1.ChangeDutyCycle(0)
 	Motor2.ChangeDutyCycle(0)
 	
-forward(50)
+forward(100)
 sleep(2)
-backward(50)
+backward(100)
 sleep(2)
 stop()
 
