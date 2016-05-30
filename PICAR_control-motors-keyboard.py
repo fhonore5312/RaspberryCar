@@ -1,12 +1,17 @@
 # Imports
-import pygame
-from pygame.locals import *
+import pygame, sys
+import pygame.locals as GAME_GLOBALS
+import pygame.event as GAME_EVENTS
 import RPi.GPIO as GPIO
 from time import sleep
 
 # Initialisation
+pygame.init()
 GPIO.setmode(GPIO.BCM)
 # GPIO.cleanup()
+
+# Keyboard Variables
+pressed_left = False
 
 # Motor1 => moteur de direction
 Motor1E = 23
@@ -51,28 +56,31 @@ def backward(speed):
 def stop():
 	Motor1.ChangeDutyCycle(0)
 	Motor2.ChangeDutyCycle(0)
-	
+
+def move():
+	if pressed_left:
+		forward(50)
+		sleep(2)
+
+
 # forward(50)
 # sleep(2)
 # backward(50)
 # sleep(2)
 # stop()
 
-
-
 # event loop
-pygame.init()
 
 while 1:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 sys.exit()        
             elif event.type == pygame.KEYDOWN:          # check for key presses          
-                if event.key == pygame.K_1:        # left arrow turns left
+                if event.key == pygame.K_LEFT:        # left arrow turns left
                         print ("appui")
-                        forward(50)
-                        sleep(1)
-                        #pressed_left = True
+                       # forward(50)
+                       # sleep(1)
+                        pressed_left = True
                 #elif event.key == pygame.K_RIGHT:     # right arrow turns right
                 #    pressed_right = True
                 #elif event.key == pygame.K_UP:        # up arrow goes up
@@ -80,11 +88,11 @@ while 1:
                 #elif event.key == pygame.K_DOWN:     # down arrow goes down
                 #    pressed_down = True
             elif event.type == pygame.KEYUP:            # check for key releases
-                if event.key == pygame.K_1:        # left arrow turns left
+                if event.key == pygame.K_LEFT:        # left arrow turns left
                         print ("relache")
-                        forward(50)
-                        sleep(1)
-                    # pressed_left = False
+                       #  forward(50)
+                       #  sleep(1)
+                        pressed_left = False
                 #elif event.key == pygame.K_RIGHT:     # right arrow turns right
                 #    pressed_right = False
                 #elif event.key == pygame.K_UP:        # up arrow goes up
@@ -92,9 +100,11 @@ while 1:
                 #elif event.key == pygame.K_DOWN:     # down arrow goes down
                 #    pressed_down = False
 
+        move()
+
 # In your game loop, check for key states:
 # if pressed_left:
-#    forward(50)
+#     forward(50)
 #    sleep(1)
 # if pressed_right:
 #    forward(50)
