@@ -1,3 +1,7 @@
+# Contrôle de la Raspberry Car à l'aide de la librairie stdin
+# stdin est capable de savoir si une touche a été appuyée
+# Cependant, il n'est pas possible de savoir si la touche reste appuyée ou est relâchée
+
 # Imports
 import RPi.GPIO as GPIO
 import sys, tty, termios, time
