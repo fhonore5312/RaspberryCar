@@ -1,124 +1,123 @@
 # Imports
-import pygame, sys
-import pygame.locals as GAME_GLOBALS
-import pygame.event as GAME_EVENTS
 import RPi.GPIO as GPIO
-from time import sleep
+import sys, tty, termios, time
 
 # Initialisation
-pygame.init()
 GPIO.setmode(GPIO.BCM)
-# GPIO.cleanup()
 
-# Keyboard Variables
-pressed_left = False
+# These two blocks of code configure the PWM settings for the two DC motors on the Raspberry car.
+# It defines the two GPIO pins used for the input, starts the PWM and sets the motors' speed to 0
 
-# Motor1 => moteur de direction
+# Configuration of Motor1, motor for direction: going left / going right
+# On declare les ports qui permettent de piloter le Moteur1 depuis la puce electronique 293
 Motor1E = 23
 Motor1A = 24
 Motor1B = 25
-
-# Motor2 => moteur de marche avant / marche arrière
-Motor2E = 21
-Motor2A = 16
-Motor2B = 20
-
+# On indique que ces ports sont pilotés depuis le raspberry et sont des ports de sortie
 GPIO.setup(Motor1A,GPIO.OUT)
 GPIO.setup(Motor1B,GPIO.OUT)
 GPIO.setup(Motor1E,GPIO.OUT)
+# Instruction qui permet d'indiquer que l'on va utiliser 100% de la puissance moteur
+Motor1 = GPIO.PWM(Motor1E, 100)
+# On force la vitesse à 0
+Motor1.start(0)
 
+# Configuration of Motor2, motor : going forwards / going backwards
+# on declare les ports qui permettent de piloter le Moteur1 depuis la puce electronique 293
+Motor2E = 21
+Motor2A = 16
+Motor2B = 20
+# On indique que ces ports sont pilotés depuis le raspberry et sont des ports de sortie
 GPIO.setup(Motor2A,GPIO.OUT)
 GPIO.setup(Motor2B,GPIO.OUT)
 GPIO.setup(Motor2E,GPIO.OUT)
-
-# GPIO.output(Motor1E,GPIO.HIGH)
-# GPIO.output(Motor1E,GPIO.HIGH)
-
-Motor1 = GPIO.PWM(23, 100)
-Motor2 = GPIO.PWM(21, 100)
-Motor1.start(0)
+# Instruction qui permet d'indiquer que l'on va utiliser 100% de la puissance moteur
+Motor2 = GPIO.PWM(Motor2E, 100)
+# On force la vitesse à 0
 Motor2.start(0)
 
-# marche avant
-def forward(speed):
-	# print "going forwards"
-	GPIO.output(Motor2A,GPIO.HIGH)
-	GPIO.output(Motor2B,GPIO.LOW)
-	Motor2.ChangeDutyCycle(speed)
+# The getch method can determine which key has been pressed by the user on the keyboard by accessing the system files
+# It will then return the pressed key as a variable
 
-# marche arrière
-def backward(speed):
-	# print "going backwards"
-	GPIO.output(Motor2A,GPIO.LOW)
-	GPIO.output(Motor2B,GPIO.HIGH)
-	Motor2.ChangeDutyCycle(speed)
-
-def stop():
-	Motor1.ChangeDutyCycle(0)
-	Motor2.ChangeDutyCycle(0)
-
-def move():
-	if pressed_left:
-		forward(50)
-		sleep(2)
+def getch():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+        sys.stdin.
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 
-# forward(50)
-# sleep(2)
-# backward(50)
-# sleep(2)
-# stop()
+# This section of code defines the methods used to determine whether a motor needs to spin forward or backwards. The
+# different directions are acheived by setting one of the  GPIO pins to true and the other to false.
 
-# event loop
+def Motor1_left():
+    GPIO.output(Motor1A, True)
+    GPIO.output(Motor1B, False)
 
-while 1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: 
-                sys.exit()        
-            elif event.type == pygame.KEYDOWN:          # check for key presses          
-                if event.key == pygame.K_LEFT:        # left arrow turns left
-                        print ("appui")
-                       # forward(50)
-                       # sleep(1)
-                        pressed_left = True
-                #elif event.key == pygame.K_RIGHT:     # right arrow turns right
-                #    pressed_right = True
-                #elif event.key == pygame.K_UP:        # up arrow goes up
-                #    pressed_up = True
-                #elif event.key == pygame.K_DOWN:     # down arrow goes down
-                #    pressed_down = True
-            elif event.type == pygame.KEYUP:            # check for key releases
-                if event.key == pygame.K_LEFT:        # left arrow turns left
-                        print ("relache")
-                       #  forward(50)
-                       #  sleep(1)
-                        pressed_left = False
-                #elif event.key == pygame.K_RIGHT:     # right arrow turns right
-                #    pressed_right = False
-                #elif event.key == pygame.K_UP:        # up arrow goes up
-                #    pressed_up = False
-                #elif event.key == pygame.K_DOWN:     # down arrow goes down
-                #    pressed_down = False
+def Motor1_right():
+    GPIO.output(Motor1A, False)
+    GPIO.output(Motor1B, True)
 
-        move()
+def Motor2_forward():
+    GPIO.output(Motor2A, True)
+    GPIO.output(Motor2B, False)
 
-# In your game loop, check for key states:
-# if pressed_left:
-#     forward(50)
-#    sleep(1)
-# if pressed_right:
-#    forward(50)
-#    sleep(1)
-# if pressed_up:
-#    forward(50)
-#    sleep(1)
-#if pressed_down:
-#    forward(50)
-#    sleep(1)
+def Motor2_backward():
+    GPIO.output(Motor2A, False)
+    GPIO.output(Motor2B, True)
+
+# Infinite loop that will not end until the user presses the exit key
+
+while True:
+    # Keyboard character retrieval method is called and saved into variable
+    char = getch()
+
+    # The car will go left when the "k" key is pressed
+    if(char == "k"):
+        Motor1_left()
+        Motor1.ChangeDutyCycle(99)
+
+    # The car will go right when the "m" key is pressed
+    if(char == "m"):
+        Motor1_right()
+        Motor1.ChangeDutyCycle(99)
+
+    # The car will go forward when the "r" key is pressed
+    if(char == "r"):
+        Motor2_forward()
+        Motor2.ChangeDutyCycle(99)
+
+    # The car will go forward when the "r" key is pressed
+    if(char == "f"):
+        Motor2_backward()
+        Motor2.ChangeDutyCycle(99)
+
+    # The "a" key will toggle the steering left
+    #if(char == "a"):
+    #    toggleSteering("left")
+
+    # The "d" key will toggle the steering right
+    #if(char == "d"):
+    #     toggleSteering("right")
 
 
-# print "And stop before cleaning up"
-# GPIO.output(Motor1E,GPIO.LOW)
-# GPIO.output(Motor2E,GPIO.LOW)
+    # The "x" key will break the loop and exit the program
+    if(char == "x"):
+        print("Program Ended")
+        break
 
+    # At the end of each loop the acceleration motor will stop
+    # and wait for its next command
+    # Motor1.ChangeDutyCycle(0)
+    # Motor2.ChangeDutyCycle(0)
+
+    # The keyboard character variable will be set to blank, ready
+    # to save the next key that is pressed
+    char = ""
+
+# Program will cease all GPIO activity before terminating
 GPIO.cleanup()
