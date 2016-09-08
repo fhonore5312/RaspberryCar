@@ -74,12 +74,21 @@
             if ( screen.width > screen.height )
             {
                 // In landscape mode
+<<<<<<< HEAD
                 motorStick.css( 'left', screen.width - motorStick.width());
                 motorStick.css( 'top', 0.5*screen.height - motorStick.height());
                 panTiltStick.css( 'left', 0.3*screen.width - panTiltStick.width());
                 panTiltStick.css( 'top', 0.5*screen.height - panTiltStick.height());
                 btnShutdown.css( 'position', 'fixed' );
                 btnShutdown.css( 'left', 0.9*screen.width - btnShutdown.width());
+=======
+                motorStick.css( 'left', screen.width - motorStick.width()/2 );
+                motorStick.css( 'top', 0.5*screen.height - motorStick.height()/2 );
+                panTiltStick.css( 'left', 0.9*screen.width - panTiltStick.width()/2 );
+                panTiltStick.css( 'top', 0.5*screen.height - panTiltStick.height()/2 );
+                btnShutdown.css( 'position', 'fixed' );
+                btnShutdown.css( 'left', 0.9*screen.width - btnShutdown.width()/2 );
+>>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
                 btnShutdown.css( 'top', 0.1*screen.height );
             }
             else
@@ -204,10 +213,18 @@
       <div class="inner_circle"></div>
       <div class="handle"></div>
     </div>
+<<<<<<< HEAD
+=======
+    <!--
+>>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
     <div class="joystick" id="pan_tilt_stick">
       <div class="inner_circle"></div>
       <div class="handle"></div>
     </div>
+<<<<<<< HEAD
+=======
+    //-->
+>>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
     <button id="btnShutdown" type="button" class="btn">Shutdown</button>
     
     <div id="modalShutdownDialog">
