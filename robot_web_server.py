@@ -77,6 +77,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.escape
+from tornado.escape import json_encode
 import sockjs.tornado
 import threading
 import Queue
@@ -88,6 +89,7 @@ import PICAR_controller
 import subprocess
 import sys
 robot = None
+distance = 4
 
 cameraStreamer = None
 scriptPath = os.path.dirname( __file__ )
@@ -104,7 +106,7 @@ def createRobot(resultQueue ):
             
 #--------------------------------------------------------------------------------------------------- 
 class ConnectionHandler( sockjs.tornado.SockJSConnection ):
-    
+#class ConnectionHandler(tornado.websocket.WebSocketHandler):
     #-----------------------------------------------------------------------------------------------
     def on_open( self, info ):
         
@@ -131,7 +133,14 @@ class ConnectionHandler( sockjs.tornado.SockJSConnection ):
                 
                 elif lineData[ 0 ] == "StartStreaming":
                     cameraStreamer.startStreaming()
-                    
+
+                elif lineData[0] == "GetDistance":
+                    distance_obj = {
+                        'measure': 7,
+                        'unit': 'centimeter'
+                    }
+                    self.send(json_encode(distance_obj))
+
                 elif lineData[ 0 ] == "Shutdown":
                     cameraStreamer.stopStreaming()
                     gopigo.stop()
