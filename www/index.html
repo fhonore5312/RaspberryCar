@@ -14,16 +14,17 @@
             -webkit-border-radius: 100%;
             -moz-border-radius: 100%;
             border-radius: 100%; 
-            /*background-color: #eee;*/
+            /*background-color: #eee;*/			
         }
         .joystick .inner_circle {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 125px;
+            height: 125px;
             -webkit-border-radius: 100%;
             -moz-border-radius: 100%;
             border-radius: 100%; 
-            background-color: #ccc;
+            /*background-color: #ccc;*/
+			border: 1px solid rgb(107, 35, 35);
         }
         .joystick .handle {
             position: absolute;
@@ -32,13 +33,22 @@
             background-color: rgb(201, 44, 44);
             border: 1px solid rgb(107, 35, 35);
             border-radius: 5px;
-        }
+        }       
         
         #camera {
             display: block;
             margin-left: auto;
             margin-right: auto;
             width: 640px;
+        }
+		
+		#distance {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+			margin-bottom: 20px;
+            width: 640px;
+			font-size: 50px;
         }
         
         #motor_stick {
@@ -52,6 +62,7 @@
             top: 200px;
             left: 400px;
         }
+		
     </style>
     
     <link href="css/style.css" rel="stylesheet">
@@ -60,7 +71,7 @@
     <script src="js/jquery.js"></script>
     <script src="js/jquery.joystick.js"></script>
     <script src="js/sockjs-0.3.min.js"></script>
-    
+	    
     <script>
         function layoutControls() {
         
@@ -74,30 +85,21 @@
             if ( screen.width > screen.height )
             {
                 // In landscape mode
-<<<<<<< HEAD
-                motorStick.css( 'left', screen.width - motorStick.width());
-                motorStick.css( 'top', 0.5*screen.height - motorStick.height());
-                panTiltStick.css( 'left', 0.3*screen.width - panTiltStick.width());
-                panTiltStick.css( 'top', 0.5*screen.height - panTiltStick.height());
-                btnShutdown.css( 'position', 'fixed' );
-                btnShutdown.css( 'left', 0.9*screen.width - btnShutdown.width());
-=======
-                motorStick.css( 'left', screen.width - motorStick.width()/2 );
-                motorStick.css( 'top', 0.5*screen.height - motorStick.height()/2 );
-                panTiltStick.css( 'left', 0.9*screen.width - panTiltStick.width()/2 );
-                panTiltStick.css( 'top', 0.5*screen.height - panTiltStick.height()/2 );
+                motorStick.css( 'left', 0.5*screen.width +320 - motorStick.width());
+                motorStick.css( 'top', screen.height-320);
+                panTiltStick.css( 'left', 0.5*screen.width -320);
+                panTiltStick.css( 'top', screen.height-320);
                 btnShutdown.css( 'position', 'fixed' );
                 btnShutdown.css( 'left', 0.9*screen.width - btnShutdown.width()/2 );
->>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
                 btnShutdown.css( 'top', 0.1*screen.height );
             }
             else
             {
                 // In portrait mode
-                motorStick.css( 'left', 0.2*screen.width - motorStick.width()/2 );
-                motorStick.css( 'top', 0.7*screen.height - motorStick.height()/2 );
-                panTiltStick.css( 'left', 0.8*screen.width - panTiltStick.width()/2 );
-                panTiltStick.css( 'top', 0.7*screen.height - panTiltStick.height()/2 );
+                motorStick.css( 'left', 0.5*screen.width +320 - 1.5*motorStick.width());
+                motorStick.css( 'top', screen.height-320 );
+                panTiltStick.css( 'left', 0.5*screen.width -320+0.5*panTiltStick.width());
+                panTiltStick.css( 'top', screen.height-320);
                 btnShutdown.css( 'position', 'fixed' );
                 btnShutdown.css( 'left', 0.5*screen.width - btnShutdown.width()/2 );
                 btnShutdown.css( 'top', 0.6*screen.height - btnShutdown.height()/2 );
@@ -115,6 +117,30 @@
              cameraURL = "http://" + window.location.hostname + ":8080/?action=stream";
              socket = new SockJS( webSocketURL );
              var shutdownComplete = false;
+			 var detecteurDistance;
+			 var distanceOK = 1 ;
+			 var distanceWarn = 0.5;
+			 var distanceStop = 0.2;
+			 
+			 socket.onmessage = function (evt) {
+				// alert(evt.data);
+				// console.log("Received data string");
+				var jsonObject = JSON.parse(evt.data);
+				detecteurDistance = jsonObject.measure;
+				
+			 $("#distance").html(detecteurDistance+" m");
+
+			 if (detecteurDistance < distanceWarn) {
+				$("#distance").css("color", "red");
+			 }
+			 else if (detecteurDistance >= distanceWarn && detecteurDistance < distanceOK ){
+				$("#distance").css("color", "orange");
+			 }
+			 else {
+				$("#distance").css("color", "green");
+			 }
+			};
+			 
          
              $("#camera").attr( "src", cameraURL );
    
@@ -188,6 +214,7 @@
             setInterval( function() { 
                 if ( socket.readyState == SockJS.OPEN ) {
                     socket.send( "StartStreaming" );
+					socket.send( "GetDistance" );
                     $("#camera").attr( "src", cameraURL );
                     
                     if ( shutdownComplete )
@@ -207,24 +234,21 @@
   </head>
 
   <body>
-    <p><img id="camera" src=""/></p>
+      
+    <p>
+		<div id="distance"></div>
+		<img id="camera" src=""/>
+	</p>
     
     <div class="joystick" id="motor_stick">
       <div class="inner_circle"></div>
       <div class="handle"></div>
     </div>
-<<<<<<< HEAD
-=======
-    <!--
->>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
+
     <div class="joystick" id="pan_tilt_stick">
       <div class="inner_circle"></div>
       <div class="handle"></div>
     </div>
-<<<<<<< HEAD
-=======
-    //-->
->>>>>>> 79c30542090daca53bb96fbd74e70f51daceff2a
     <button id="btnShutdown" type="button" class="btn">Shutdown</button>
     
     <div id="modalShutdownDialog">
@@ -237,6 +261,5 @@
         </div>
         <div class="overlay"></div>
     </div>
-    
   </body>
 </html>
