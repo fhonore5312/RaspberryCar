@@ -81,9 +81,9 @@ class RobotController:
     speed_r=200
     #-----------------------------------------------------------------------------------------------
     def __init__( self ):
-        # FRH gopigo.set_speed(200)
+        # gopigo.set_speed(200)
         PICAR_controller.stop()
-        # FRH gopigo.fwd()
+        #gopigo.fwd()
         
         self.lastServoSettingsSendTime = 0.0
         self.lastUpdateTime = 0.0
@@ -124,33 +124,67 @@ class RobotController:
         if joystickX > .5:
             print "Left"
             PICAR_controller.Motor1_right()
-            # FRH gopigo.left()
+#			gopigo.left()
         elif joystickX <-.5:
             print "Right"
             PICAR_controller.Motor1_left()
-            # FRH gopigo.right()
+            #gopigo.right()
         elif joystickY > .5:
             print "Fwd"
             PICAR_controller.Motor2_forward()
-            # FRH gopigo.fwd()
+            #gopigo.fwd()
         elif joystickY < -.5:
             print "Back"
             PICAR_controller.Motor2_backward()
-            # FRH gopigo.bwd()
+            #gopigo.bwd()
         else:
             print "Stop"
             PICAR_controller.stop()
-            # FRH gopigo.stop()
+            #gopigo.stop()
 
     def setNeckJoystickPos( self, joystickX, joystickY ):
         #print "g"
         joystickX, joystickY = self.normaliseJoystickData( joystickX, joystickY )
+        # PICAR_controller.move_Pan(joystickX)
+        # PICAR_controller.move_Tilt(joystickY)
+        # print "Right joy", joystickX, joystickY
+        # PWM.add_channel_pulse(0, 17, 0, horizontal)
+        # GPIO2.setup(18, GPIO2.OUT)
+        # Motor3 = GPIO2.PWM(18, 100)
+        # Motor3.ChangeDutyCycle(joystickY*100)
+        # GPIO2.PWM.add_channel_pulse(0, 18, 0, joystickY*100)
+        # time.sleep(1)
+        # Motor3.start(0)
+
+        if joystickX > .3:
+            print "Pan Right"
+            PICAR_controller.move_Pan(-joystickX)
+            #			gopigo.left()
+        elif joystickX < -.3:
+            print "Pan Left"
+            PICAR_controller.move_Pan(-joystickX)
+            # gopigo.right()
+        elif joystickY > .3:
+            print "Tilt up"
+            PICAR_controller.move_Tilt(-joystickY)
+            # gopigo.fwd()
+        elif joystickY < -.3:
+            print "Tilt Down"
+            PICAR_controller.move_Tilt(-joystickY)
+            # gopigo.bwd()
+        else:
+            print "PanTilt Stop"
+            PICAR_controller.PanTilt_stop()
+            # gopigo.stop()
+
+
         if debug:	
             print "Right joy",joystickX, joystickY
             #print self.speed_r*joystickY
         #gopigo.set_right_speed(int(self.speed_r*joystickY))
         #gopigo.fwd()
         #self.lastMotionCommandTime = time.time()
+    #time.sleep(1)
 
     def update( self ):
         if debug:	
