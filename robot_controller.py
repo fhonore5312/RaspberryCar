@@ -121,21 +121,21 @@ class RobotController:
             #print self.speed_l*joystickY
         #gopigo.set_left_speed(int(self.speed_l*joystickY))
         #gopigo.fwd()
-        if joystickX > .5:
+        if joystickX > .2:
             print "Left"
-            PICAR_controller.Motor1_right()
+            PICAR_controller.Motor1_right(joystickX, joystickY)
 #			gopigo.left()
-        elif joystickX <-.5:
+        elif joystickX <-.2:
             print "Right"
-            PICAR_controller.Motor1_left()
+            PICAR_controller.Motor1_left(joystickX, joystickY)
             #gopigo.right()
-        elif joystickY > .5:
+        elif joystickY > .2:
             print "Fwd"
-            PICAR_controller.Motor2_forward()
+            PICAR_controller.Motor2_forward(joystickY)
             #gopigo.fwd()
-        elif joystickY < -.5:
+        elif joystickY < -.2:
             print "Back"
-            PICAR_controller.Motor2_backward()
+            PICAR_controller.Motor2_backward(joystickY)
             #gopigo.bwd()
         else:
             print "Stop"
