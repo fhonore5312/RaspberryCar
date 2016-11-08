@@ -59,29 +59,30 @@ PanServo.start(5.9) #Centers the servo
 sleep(0.5) #Allowing the servo to move to the center
 PanServo.ChangeDutyCycle(0) #The black magic. I'll explain later
 
-def Motor1_left():
+def Motor1_left(X,Y):
     GPIO.output(Motor1A, True)
     GPIO.output(Motor1B, False)
-    Motor1.ChangeDutyCycle(100)
-    Motor2.ChangeDutyCycle(100)
+    Motor1.ChangeDutyCycle(abs(X)*100)
+    Motor2.ChangeDutyCycle(abs(Y)*100)
 
-def Motor1_right():
+def Motor1_right(X,Y):
     GPIO.output(Motor1A, False)
     GPIO.output(Motor1B, True)
-    Motor1.ChangeDutyCycle(100)
-    Motor2.ChangeDutyCycle(100)
+    Motor1.ChangeDutyCycle(abs(X)*100)
+    Motor2.ChangeDutyCycle(abs(Y)*100)
 
-def Motor2_forward():
+def Motor2_forward(Y):
     print "AVANT"
     GPIO.output(Motor2A, False)
     GPIO.output(Motor2B, True)
-    Motor2.ChangeDutyCycle(100)
+    Motor2.ChangeDutyCycle(abs(Y)*100)
 
-def Motor2_backward():
+def Motor2_backward(Y):
     print "ARRIERE"
     GPIO.output(Motor2A, True)
     GPIO.output(Motor2B, False)
-    Motor2.ChangeDutyCycle(100)
+    Motor2.ChangeDutyCycle(0.5*abs(Y)*100)
+    # on multiplie par un facteur de 0.5 pour limiter la vitesse en marche arriere
 
 def stop():
     Motor1.ChangeDutyCycle(0)
